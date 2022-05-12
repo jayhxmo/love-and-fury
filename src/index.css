@@ -6,7 +6,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #fff;
+  background: #fafafa;
+  /*background: #ddd;*/
   color: #000;
   overflow: hidden;
   font-family: sans-serif;

@@ -14,7 +14,7 @@ import Inter from "./Inter-Bold.woff";
 
 const projectWords = [
   "sundial",
-  "persona (wallets)",
+  "persona, wallets",
   "os concepts",
   "prototyping practice",
   "3d explorations",
@@ -25,22 +25,22 @@ const projectWords = [
 function Word({ children, ...props }) {
   const color = new THREE.Color();
   // const fontProps = { fontSize: 2.5, letterSpacing: -0.05, lineHeight: 1, 'material-toneMapped': false }
-  const fontFile = useLoader(FontLoader, "/new-york-medium.json");
-
-  const config = useMemo(
-    () => ({
-      fontFile,
-      fontSize: 6,
-      letterSpacing: -0.05,
-      lineHeight: 1,
-      "material-toneMapped": false,
-    }),
-    [fontFile]
-  );
+//   const fontFile = useLoader(FontLoader, "/new-york-medium.json");
+// 
+//   const config = useMemo(
+//     () => ({
+//       fontFile,
+//       fontSize: 6,
+//       letterSpacing: -0.05,
+//       lineHeight: 1,
+//       "material-toneMapped": false,
+//     }),
+//     [fontFile]
+//   );
 
   const fontProps = {
-    font: fontFile,
-    fontSize: 2.5,
+    font: 'NewYork.ttf',
+    fontSize: 6,
     letterSpacing: -0.05,
     lineHeight: 1,
     "material-toneMapped": false,
@@ -72,11 +72,13 @@ function Word({ children, ...props }) {
       onPointerOver={over}
       onPointerOut={out}
       {...props}
-      {...config}
+      {...fontProps}
       children={children}
     />
   );
 }
+
+const cameraDistance = 100;
 
 function Cloud({ radius = 20 }) {
   let count = projectWords.length;
@@ -85,8 +87,8 @@ function Cloud({ radius = 20 }) {
   const words = useMemo(() => {
     const temp = [];
     const spherical = new THREE.Spherical();
-    const phiSpan = Math.PI / (count * 2);
-    const thetaSpan = (Math.PI * 2) / count;
+    const phiSpan = Math.PI / (count);
+
     for (let i = 0; i < count + 1; i++)
       // Taken from https://discourse.threejs.org/t/can-i-place-obects-on-a-sphere-surface-evenly/4773/6
       // for (let j = 0; j < count; j++)
@@ -99,28 +101,18 @@ function Cloud({ radius = 20 }) {
     return temp;
   }, [count, radius]);
 
-  //   useFrame((state, delta) => {
-  //     const offset = 1 - scroll.offset;
-  //     // console.log('scroll', offset, scroll.offset);
-  //
-  //     // state.camera.position.set(
-  //     //   0,
-  //     //   Math.atan(scroll.offset * Math.PI * 2) * 50,
-  //     //   80
-  //     // );
-  //     state.camera.lookAt(0, 0, 0);
-  //   });
-
   useFrame((state, delta) => {
-    const offset = 1 - scroll.offset;
+    // const scrollOffset = scroll.offset * 0.8;
+    const scrollOffset = scroll.offset * 1;
+
     state.camera.position.set(
       0,
-      (Math.cos(scroll.offset * Math.PI / 2) * 80),
+      (Math.cos(scrollOffset * Math.PI / 1.2) * cameraDistance),
       // (Math.atan(offset * Math.PI) * 80) / 1.26,
-      (Math.sin(scroll.offset * Math.PI / 2) * 80)
+      (Math.sin(scrollOffset * Math.PI / 1.2) * cameraDistance)
     );
     state.camera.lookAt(0, 0, 0);
-    console.log("Camera", state.camera.position);
+    // console.log("Camera", state.camera.position);
   });
 
   return words.map(([pos, word], index) => (
@@ -133,11 +125,11 @@ function App() {
 
   return (
     // <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 80], fov: 80 }}>
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 80, 0], fov: 80 }}>
-      <fog attach="fog" args={["#ffffff", 0, 70]} />
+    <Canvas dpr={[1, 2]} camera={{ position: [0, cameraDistance, 0], fov: 90, near: 0.1, far: 80 }}>
+      <fog attach="fog" args={["#fafafa", 30, 45]} />
       <ScrollControls pages={3}>
         <group rotation={[0, 0, 0]}>
-          <Cloud count={8} radius={50} />
+          <Cloud radius={70} />
         </group>
       </ScrollControls>
     </Canvas>
